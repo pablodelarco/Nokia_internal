@@ -21,8 +21,8 @@ def process_worksheet(df, kpi_name):
  
 
 def main():
-    excel_file = "testdata.xlsx"
-    excel_file_2 = "5100_5G010_-_Users-emmanuel-2023_08_14-08_24_15__934.xlsx"
+    excel_file = "testdata_1.xlsx"
+    excel_file_2 = "testdata_2.xlsx"
 
 
     time_ranges_input = input("Enter time ranges (e.g., '3:30, 3:45, 5:50, 6:00'): ")
