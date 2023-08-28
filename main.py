@@ -4,7 +4,7 @@ from datetime import time
 
 
 kpi_number_list = ['NR_578C', 'NR_579C', 'NR_5258A', 'NR_5259A', 'NR_5077B']
-kpi_number_list_2 = ['NR_5192D', 'NR_5193B', 'NR_716A', 'NR_718A']
+kpi_number_reference = ['NR_5192D', 'NR_5193B', 'NR_716A', 'NR_718A']
 
  
 
@@ -22,7 +22,7 @@ def process_worksheet(df, kpi_name):
 
 def main():
     excel_file = "testdata_1.xlsx"
-    excel_file_2 = "testdata_2.xlsx"
+    excel_file_reference = "testdata_2.xlsx"
 
 
     time_ranges_input = input("Enter time ranges (e.g., '3:30, 3:45, 5:50, 6:00'): ")
@@ -46,14 +46,14 @@ def main():
  
     for worksheet_name in worksheet_names_2:
         if "Data for" in worksheet_name:
-            df = pd.read_excel(excel_file_2, sheet_name=worksheet_name)
+            df = pd.read_excel(excel_file_reference, sheet_name=worksheet_name)
             kpi_names_2 = df.columns[4:]
             kpi_numbers_2[worksheet_name] = df.iloc[0, 4:].tolist()
 
  
 
             for kpi_name, kpi_number in zip(kpi_names_2, kpi_numbers_2[worksheet_name]):
-                if kpi_number in kpi_number_list_2:
+                if kpi_number in kpi_number_reference:
                     new_df = process_worksheet(df, kpi_name)
                     new_df.drop(columns=["Time"], inplace=True)  # Drop the "Time" column from the DataFrame
                     kpi_data_2[kpi_name] = (new_df, kpi_number)
