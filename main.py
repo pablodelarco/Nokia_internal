@@ -14,15 +14,15 @@ def process_worksheet(df, kpi_name):
 
 
     kpi_df["Time"] = pd.to_datetime(kpi_df.index).time
-
+    kpi_df["Date"] = pd.to_datetime(kpi_df.index).date
  
     return kpi_df
 
  
 
 def main():
-    excel_file = "testdata_1.xlsx"
-    excel_file_reference = "testdata_2.xlsx"
+    excel_file = "file_name.xlsx"
+    excel_file_reference = "file_2_name.xlsx"
 
 
     time_ranges_input = input("Enter time ranges (e.g., '3:30, 3:45, 5:50, 6:00'): ")
@@ -33,7 +33,7 @@ def main():
     worksheet_names = excel_data.sheet_names
 
  
-    excel_data_2 = pd.ExcelFile(excel_file_2)
+    excel_data_2 = pd.ExcelFile(excel_file_reference)
     worksheet_names_2 = excel_data_2.sheet_names
 
  
@@ -99,19 +99,31 @@ def main():
             color_index = 0
             for row_num, (index, row) in enumerate(kpi_df.iterrows(), start=3):
                 time_value = row["Time"]
-
+                date_value = row["Date"]
+                
                 if pd.notna(time_value):
                     for i in range(0, len(time_ranges)-1, 2):
-                         start_time = time_ranges[i]
-                         end_time = time_ranges[i+1]
+                        start_time = time_ranges[i]
+                        end_time = time_ranges[i+1]
+                        
+                        start_date = kpi_df.loc[kpi_df['Time'] == start_time, 'Date'].item()
+                        end_date = kpi_df.loc[kpi_df['Time'] == end_time, 'Date'].item()
 
-                         if start_time <= time_value <= end_time:
+                        # Compare both time and date
+                        if ((start_time <= time_value <= end_time) or not((start_time > time_value > end_time)) and start_date != end_date):
+                            
+                            
+                            if (start_time >= time_value >= end_time):
+                                print('Date: ' + str(date_value))
+                            
+                                
                             if color_index == 0:
                                 worksheet.conditional_format(row_num, 2, row_num, 4, {
                                     'type':     'cell',
                                     'criteria': '>',
                                     'value':    0,
-                                    'format':   red_background_format})
+                                    'format':   red_background_format
+                                })
                                 if time_value == end_time:
                                     color_index = 1
                             else:
@@ -119,10 +131,13 @@ def main():
                                     'type':     'cell',
                                     'criteria': '>',
                                     'value':    0,
-                                    'format':   green_background_format})
+                                    'format':   green_background_format
+                                })
                                 if time_value == end_time:
                                     color_index = 0
                             break
+    
+            
 
 
             kpi_df.drop(columns=["Time"], inplace=True)  # Drop the "Time" column from the DataFrame
