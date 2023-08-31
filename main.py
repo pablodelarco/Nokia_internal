@@ -3,7 +3,7 @@ import xlsxwriter
 from datetime import time
 
 
-kpi_number_list = ['NR_578C', 'NR_579C', 'NR_5258A', 'NR_5259A', 'NR_5077B']
+kpi_number_list = ['NR_578C', 'NR_579C', 'NR_5258A', 'NR_5259A', 'NR_5739A', 'NR_5740A']
 kpi_number_reference = ['NR_5192D', 'NR_5193B', 'NR_716A', 'NR_718A']
 
  
@@ -21,8 +21,8 @@ def process_worksheet(df, kpi_name):
  
 
 def main():
-    excel_file = "file_name.xlsx"
-    excel_file_reference = "file_2_name.xlsx"
+    excel_file = "System_Program.xlsx"
+    excel_file_reference = "Users.xlsx"
 
 
     time_ranges_input = input("Enter time ranges (e.g., '3:30, 3:45, 5:50, 6:00'): ")
@@ -72,7 +72,7 @@ def main():
                     kpi_data[kpi_name] = (kpi_df, kpi_number)
  
 
-    output_file = "combined_tables.xlsx"
+    output_file = "python_excel_August_30.xlsx"
     with pd.ExcelWriter(output_file, engine="xlsxwriter") as writer:
         workbook = writer.book
 
@@ -111,11 +111,6 @@ def main():
 
                         # Compare both time and date
                         if ((start_time <= time_value <= end_time) or not((start_time > time_value > end_time)) and start_date != end_date):
-                            
-                            
-                            if (start_time >= time_value >= end_time):
-                                print('Date: ' + str(date_value))
-                            
                                 
                             if color_index == 0:
                                 worksheet.conditional_format(row_num, 2, row_num, 4, {
@@ -141,6 +136,7 @@ def main():
 
 
             kpi_df.drop(columns=["Time"], inplace=True)  # Drop the "Time" column from the DataFrame
+            kpi_df.drop(columns=["Date"], inplace=True) # Drop the "Date" column from the DataFrame
 
 
             kpi_df.to_excel(writer, sheet_name=kpi_number, startrow=2, index=True, freeze_panes=(1, 0), na_rep="")
