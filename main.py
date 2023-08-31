@@ -25,7 +25,7 @@ def main():
     excel_file_reference = "Users.xlsx"
 
 
-    time_ranges_input = input("Enter time ranges (e.g., '3:30, 3:45, 5:50, 6:00'): ")
+    time_ranges_input = input("Enter time ranges (e.g., '19:30, 22:25, 23:00, 6:55'): ")
     time_ranges = [time(int(t.split(':')[0]), int(t.split(':')[1])) for t in time_ranges_input.split(', ')]
 
 
