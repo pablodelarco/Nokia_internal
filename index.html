@@ -1,34 +1,179 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Excel Processing</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .file-button-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .file-button {
+            flex-grow: 1;
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .file-button:hover {
+            background-color: #0056b3;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        label.file-label {
+            display: block;
+            margin-top: 5px;
+            cursor: pointer;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input[type="submit"] {
+            background-color: #28a745;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #1d862c;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            display: none;
+            color: #28a745;
+            /* Change checkmark color to green */
+        }
+
+        #file-upload-success {
+            color: #28a745;
+            font-weight: bold;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Upload NetAct Excel Reports</h1>
-    <form method="POST" action="/upload" enctype="multipart/form-data">
+    <div class="container">
+        <h1>Upload NetAct Files</h1>
 
-        <!-- Button for selecting "Users" Excel file -->
-        <button type="button" onclick="openFileInput('usersExcelInput')">Add Users Excel File</button>
-        <input type="file" name="users_file" id="usersExcelInput" style="display: none;">
-        <br>
+        <form method="POST" action="/upload" enctype="multipart/form-data">
+            <!-- Button for selecting "Users" Excel file -->
+            <div class="file-button-container">
+                <label class="file-label">
+                    <button type="button" class="file-button" onclick="openFileInput('usersExcelInput')">Select Users
+                        Excel File</button>
+                    <input type="file" name="users_file" id="usersExcelInput">
+                </label>
+                <span class="checkmark" id="usersExcelInputCheckmark">&#x2714;</span> <!-- Green checkmark -->
+            </div>
 
-        <!-- Button for selecting "System Program" Excel file -->
-        <button type="button" onclick="openFileInput('systemProgramExcelInput')">Add System Program Excel File</button>
-        <input type="file" name="system_program_file" id="systemProgramExcelInput" style="display: none;">
-        <br>
+            <!-- Button for selecting "System Program" Excel file -->
+            <div class="file-button-container">
+                <label class="file-label">
+                    <button type="button" class="file-button" onclick="openFileInput('systemProgramExcelInput')">Select
+                        System Program Excel File</button>
+                    <input type="file" name="system_program_file" id="systemProgramExcelInput">
+                </label>
+                <span class="checkmark" id="systemProgramExcelInputCheckmark">&#x2714;</span> <!-- Green checkmark -->
+            </div>
 
-        <!-- Input box for time ranges -->
-        <label for="timeRanges">Enter time ranges (e.g., '19:35, 22:25, 23:00, 6:55'):</label>
-        <input type="text" name="time_ranges" id="timeRanges">
-        <br>
-        <input type="submit" value="Upload">
+            <!-- Input box for time ranges -->
+            <label for="timeRanges">Enter time ranges (e.g., '19:35, 22:25, 23:00, 6:55'):</label>
+            <input type="text" name="time_ranges" id="timeRanges">
 
-    </form>
+            <input type="submit" value="Upload">
+        </form>
+    </div>
+
+    <!-- Success notification -->
+    <div id="file-upload-success" class="notification">
+        <span>File uploaded successfully! &#x2714;</span>
+    </div>
+
     <script>
         // Function to open the file input when the corresponding button is clicked
         function openFileInput(inputId) {
             document.getElementById(inputId).click();
         }
+
+        // Automatically hide the notification after a delay
+        function hideNotification() {
+            var notification = document.getElementById("file-upload-success");
+            if (notification) {
+                setTimeout(function () {
+                    notification.style.display = "none";
+                }, 5000); // Hide the notification after 5 seconds (adjust the duration as needed)
+            }
+        }
+
+        // Function to show the checkmark next to a button
+        function showCheckmark(buttonId) {
+            var checkmark = document.getElementById(buttonId + "Checkmark");
+            if (checkmark) {
+                checkmark.style.display = "inline-block";
+            }
+        }
+
+        // Attach an event listener to each file input to show the checkmark when a file is selected
+        document.getElementById("usersExcelInput").addEventListener("change", function () {
+            showCheckmark("usersExcelInput");
+        });
+
+        document.getElementById("systemProgramExcelInput").addEventListener("change", function () {
+            showCheckmark("systemProgramExcelInput");
+        });
+
+        // Automatically hide the notification after a delay
+        hideNotification();
     </script>
 </body>
+
 </html>
