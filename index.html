@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Excel Processing</title>
+</head>
+<body>
+    <h1>Upload NetAct Excel Reports</h1>
+    <form method="POST" action="/upload" enctype="multipart/form-data">
+
+        <!-- Button for selecting "Users" Excel file -->
+        <button type="button" onclick="openFileInput('usersExcelInput')">Add Users Excel File</button>
+        <input type="file" name="users_file" id="usersExcelInput" style="display: none;">
+        <br>
+
+        <!-- Button for selecting "System Program" Excel file -->
+        <button type="button" onclick="openFileInput('systemProgramExcelInput')">Add System Program Excel File</button>
+        <input type="file" name="system_program_file" id="systemProgramExcelInput" style="display: none;">
+        <br>
+
+        <!-- Input box for time ranges -->
+        <label for="timeRanges">Enter time ranges (e.g., '19:35, 22:25, 23:00, 6:55'):</label>
+        <input type="text" name="time_ranges" id="timeRanges">
+        <br>
+        <input type="submit" value="Upload">
+
+    </form>
+    <script>
+        // Function to open the file input when the corresponding button is clicked
+        function openFileInput(inputId) {
+            document.getElementById(inputId).click();
+        }
+    </script>
+</body>
+</html>
