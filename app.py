@@ -2,9 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, send_file
 import os
 from werkzeug.utils import secure_filename
 import pandas as pd
-from converter_2 import (
-    main,
-)  # Import your existing Python script
+from converter_2 import main
 
 app = Flask(__name__)
 
@@ -27,7 +25,12 @@ def allowed_file(filename):
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    success_message = request.args.get(
+        "success_message", ""
+    )  # Get the success message from the query parameter
+    return render_template(
+        "index.html", success_message=success_message
+    )  # Pass the success message to the template
 
 
 @app.route("/upload", methods=["POST"])
@@ -37,9 +40,11 @@ def upload_file():
 
     users_file = request.files["users_file"]
     system_program_file = request.files["system_program_file"]
+    time_ranges = request.form.get("time_ranges", "")
 
-    if users_file.filename == "" or system_program_file.filename == "":
+    """if users_file.filename == "" or system_program_file.filename == "":
         return "Both files must be selected"
+    """
 
     if (users_file and allowed_file(users_file.filename)) and (
         system_program_file and allowed_file(system_program_file.filename)
@@ -61,7 +66,7 @@ def upload_file():
 
         # Run your script here with the uploaded files
         output_file = main(
-            excel_file, excel_file_reference, app.config["OUTPUT_FOLDER"]
+            excel_file, excel_file_reference, app.config["OUTPUT_FOLDER"], time_ranges
         )
 
         # Define the path to the output file
