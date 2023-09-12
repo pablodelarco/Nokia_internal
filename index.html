@@ -46,7 +46,7 @@
         }
 
         .file-button:hover {
-            background-color: #0056b3;
+            background-color: #0056b2;
         }
 
         input[type="file"] {
@@ -59,8 +59,20 @@
             cursor: pointer;
         }
 
+        /* Modified styles for time ranges input */
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .time-label {
+            margin-top: 10px;
+        }
+
         input[type="text"] {
-            width: 100%;
+            width: 80%;
             padding: 10px;
             margin-bottom: 20px;
             border: 1px solid #ccc;
@@ -91,11 +103,32 @@
             /* Change checkmark color to green */
         }
 
+        .warning {
+            color: red;
+            font-weight: bold;
+            display: none;
+        }
+
         #file-upload-success {
             color: #28a745;
             font-weight: bold;
             margin-top: 10px;
             display: none;
+        }
+
+        #loading-bar-container {
+            width: 100%;
+            background-color: #ccc;
+            height: 10px;
+            position: relative;
+            margin-top: 10px;
+        }
+
+        #loading-bar {
+            width: 0%;
+            height: 100%;
+            background-color: #007BFF;
+            transition: width 0.3s ease-in-out;
         }
     </style>
 </head>
@@ -104,7 +137,8 @@
     <div class="container">
         <h1>Upload NetAct Files</h1>
 
-        <form method="POST" action="/upload" enctype="multipart/form-data">
+        <form method="POST" action="/upload" enctype="multipart/form-data"
+            onsubmit="return handleFormSubmission(event)">
             <!-- Button for selecting "Users" Excel file -->
             <div class="file-button-container">
                 <label class="file-label">
@@ -126,54 +160,125 @@
             </div>
 
             <!-- Input box for time ranges -->
-            <label for="timeRanges">Enter time ranges (e.g., '19:35, 22:25, 23:00, 6:55'):</label>
-            <input type="text" name="time_ranges" id="timeRanges">
+            <div class="input-container">
+                <label for="timeRanges" class="time-label" style="margin-bottom: 10px;">Enter time ranges (e.g., '19:35,
+                    22:25, 23:00, 6:55'):</label>
+                <input type="text" name="time_ranges" id="timeRanges" required>
+            </div>
 
+            <!-- Warning message for file selection -->
+            <div id="fileSelectionError" class="warning" style="display: none;">
+                Please select both files before submitting the form.
+            </div>
+
+            <!-- Warning message for missing time ranges -->
+            <div id="timeRangeWarning" class="warning" style="display: none;">
+                Please enter time ranges before submitting the form.
+            </div>
+
+            <!-- Success notification -->
+            <div id="file-upload-success" class="notification">
+                <span>File uploaded successfully! &#x2714;</span>
+            </div>
+
+            <!-- Loading animation -->
+            <div id="loading-bar-container" style="display: none;">
+                <div id="loading-bar"></div>
+            </div>
+
+            <!-- Keep only one "Upload" button -->
             <input type="submit" value="Upload">
         </form>
-    </div>
 
-    <!-- Success notification -->
-    <div id="file-upload-success" class="notification">
-        <span>File uploaded successfully! &#x2714;</span>
-    </div>
-
-    <script>
-        // Function to open the file input when the corresponding button is clicked
-        function openFileInput(inputId) {
-            document.getElementById(inputId).click();
-        }
-
-        // Automatically hide the notification after a delay
-        function hideNotification() {
-            var notification = document.getElementById("file-upload-success");
-            if (notification) {
-                setTimeout(function () {
-                    notification.style.display = "none";
-                }, 5000); // Hide the notification after 5 seconds (adjust the duration as needed)
+        <script>
+            // Function to open the file input when the corresponding button is clicked
+            function openFileInput(inputId) {
+                document.getElementById(inputId).click();
             }
-        }
 
-        // Function to show the checkmark next to a button
-        function showCheckmark(buttonId) {
-            var checkmark = document.getElementById(buttonId + "Checkmark");
-            if (checkmark) {
-                checkmark.style.display = "inline-block";
+            // Automatically hide the notification after a delay
+            function hideNotification() {
+                var notification = document.getElementById("file-upload-success");
+                if (notification) {
+                    setTimeout(function () {
+                        notification.style.display = "none";
+                    }, 5000); // Hide the notification after 5 seconds (adjust the duration as needed)
+                }
             }
-        }
 
-        // Attach an event listener to each file input to show the checkmark when a file is selected
-        document.getElementById("usersExcelInput").addEventListener("change", function () {
-            showCheckmark("usersExcelInput");
-        });
+            // Function to show the checkmark next to a button
+            function showCheckmark(buttonId) {
+                var checkmark = document.getElementById(buttonId + "Checkmark");
+                if (checkmark) {
+                    checkmark.style.display = "inline-block";
+                }
+            }
 
-        document.getElementById("systemProgramExcelInput").addEventListener("change", function () {
-            showCheckmark("systemProgramExcelInput");
-        });
+            // Attach an event listener to each file input to show the checkmark when a file is selected
+            document.getElementById("usersExcelInput").addEventListener("change", function () {
+                showCheckmark("usersExcelInput");
+            });
 
-        // Automatically hide the notification after a delay
-        hideNotification();
-    </script>
+            document.getElementById("systemProgramExcelInput").addEventListener("change", function () {
+                showCheckmark("systemProgramExcelInput");
+            });
+
+            // Automatically hide the notification after a delay
+            hideNotification();
+
+            function validateForm() {
+                var timeRangesInput = document.getElementById("timeRanges").value;
+                var timeRangeWarning = document.getElementById("timeRangeWarning");
+                var usersFileInput = document.getElementById("usersExcelInput");
+                var systemProgramFileInput = document.getElementById("systemProgramExcelInput");
+                var fileSelectionError = document.getElementById("fileSelectionError");
+
+                // Check if both files are selected
+                if (usersFileInput.files.length === 0 && systemProgramFileInput.files.length === 0) {
+                    fileSelectionError.style.display = "block";
+                    return false; // Prevent form submission
+                } else {
+                    fileSelectionError.style.display = "none"; // Hide the error message
+                }
+
+                // Check if time ranges are entered
+                if (timeRangesInput.trim() === "") {
+                    timeRangeWarning.style.display = "block";
+                    return false; // Prevent form submission
+                } else {
+                    timeRangeWarning.style.display = "none"; // Hide the error message
+                }
+                return true; // Allow form submission
+            }
+
+            // Function to handle form submission
+            function handleFormSubmission(event) {
+                // Proceed with form submission
+                event.target.submit();
+                event.preventDefault(); // Prevent the form from submitting immediately
+
+                // Show the loading animation
+                var loadingBarContainer = document.getElementById("loading-bar-container");
+                var loadingBar = document.getElementById("loading-bar");
+                loadingBarContainer.style.display = "block";
+
+
+
+                // Simulate the upload process (replace this with your actual file upload code)
+                var progress = 0;
+                var interval = setInterval(function () {
+                    progress += 4; // Simulated progress increment
+                    loadingBar.style.width = progress + "%";
+
+                    if (progress >= 100) {
+                        clearInterval(interval); // Stop the progress simulation
+                        // Hide the loading animation
+                        loadingBarContainer.style.display = "none";
+                    }
+                }, 1400); // Adjust the interval as needed
+            }
+        </script>
+    </div>
 </body>
 
 </html>
