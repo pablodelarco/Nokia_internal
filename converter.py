@@ -40,8 +40,9 @@ def generate_output_filename(date_of_output):
     return output_file
 
 
-def main(excel_file, excel_file_reference, output_folder):
-    time_ranges_input = input("Enter time ranges (e.g., '19:35, 22:25, 23:00, 6:55'): ")
+def main(excel_file, excel_file_reference, output_folder, time_ranges_input):
+    # time_ranges_input = input("Enter time ranges (e.g., '19:35, 22:25, 23:00, 6:55'): ")
+
     time_ranges = [
         time(int(t.split(":")[0]), int(t.split(":")[1]))
         for t in time_ranges_input.split(", ")
