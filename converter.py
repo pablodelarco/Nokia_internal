@@ -6,8 +6,8 @@ import os
 
 OUTPUT_FOLDER = "output"
 
-kpi_number_list = ["NR_578C", "NR_579C", "NR_5258A", "NR_5259A", "NR_5739A", "NR_5740A"]
-kpi_number_reference = ["NR_5192D", "NR_5193B", "NR_716A", "NR_718A"]
+kpi_number_list = ["NR_XXXX", "NR_XXXX", "NR_XXXX", "NR_XXXX", "NR_XXXX", "NR_XXXX"]
+kpi_number_reference = ["NR_XXXX", "NR_XXXX", "NR_XXXX", "NR_XXXX"]
 
 
 def process_worksheet(df, kpi_name):
