@@ -14,8 +14,11 @@ This project automates the processing of reports from Excel files and generates 
 - This consolidation simplifies data analysis and report generation.
 
 ### User-Friendly Interface
-- Accessible via a user-friendly website, this tool provides an intuitive and graphical interface for users to submit their Excel documents.
+- Accessible via a user-friendly website created with Flask, this tool provides an intuitive and graphical interface for users to submit their Excel documents.
 - Users can easily input time ranges and upload their files for processing.
+
+  ![image](https://github.com/pablodelarco/Python_excel/assets/63775967/765ed220-ed50-4b79-b04f-4e2950215153)
+
 
 ### Generating Output
 - The code generates a neatly formatted Excel file, making it easy to explore the organized data.
